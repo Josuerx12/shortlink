@@ -13,7 +13,6 @@ function Home() {
   const handleShorten = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input) return;
-    // Mock shortening: create a fake hash
     const hash = Math.random().toString(36).substring(2, 8);
     const result = `${window.location.origin}/${hash}`;
     setShort(result);
@@ -66,7 +65,7 @@ function Home() {
               Encurtar
             </button>
             <Link
-              to="/auth/register"
+              to="/register"
               className="hidden sm:inline-flex items-center rounded-md bg-slate-700 text-slate-100 px-4 py-3 hover:bg-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
             >
               Criar conta
@@ -92,6 +91,11 @@ function Home() {
                 {copied ? "Copiado" : "Copiar"}
               </button>
             </div>
+
+            <p>
+              Link encurtado por 24 horas, faça login para gerar url's
+              encurtadas permanente.
+            </p>
           </div>
         )}
       </section>

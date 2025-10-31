@@ -9,68 +9,131 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ShortlinkRouteImport } from './routes/$shortlink'
+import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
-import { Route as AuthRegisterIndexRouteImport } from './routes/auth/register/index'
-import { Route as AuthLoginIndexRouteImport } from './routes/auth/login/index'
+import { Route as AuthRegisterIndexRouteImport } from './routes/_auth/register/index'
+import { Route as AuthLoginIndexRouteImport } from './routes/_auth/login/index'
+import { Route as AuthForgotPasswordIndexRouteImport } from './routes/_auth/forgot-password/index'
 
+const ShortlinkRoute = ShortlinkRouteImport.update({
+  id: '/$shortlink',
+  path: '/$shortlink',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRouteRoute = DashboardRouteRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
-  id: '/dashboard/',
-  path: '/dashboard/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRouteRoute,
 } as any)
 const AuthRegisterIndexRoute = AuthRegisterIndexRouteImport.update({
-  id: '/auth/register/',
-  path: '/auth/register/',
+  id: '/_auth/register/',
+  path: '/register/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginIndexRoute = AuthLoginIndexRouteImport.update({
-  id: '/auth/login/',
-  path: '/auth/login/',
+  id: '/_auth/login/',
+  path: '/login/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthForgotPasswordIndexRoute = AuthForgotPasswordIndexRouteImport.update({
+  id: '/_auth/forgot-password/',
+  path: '/forgot-password/',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardIndexRoute
-  '/auth/login': typeof AuthLoginIndexRoute
-  '/auth/register': typeof AuthRegisterIndexRoute
+  '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/$shortlink': typeof ShortlinkRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/forgot-password': typeof AuthForgotPasswordIndexRoute
+  '/login': typeof AuthLoginIndexRoute
+  '/register': typeof AuthRegisterIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$shortlink': typeof ShortlinkRoute
   '/dashboard': typeof DashboardIndexRoute
-  '/auth/login': typeof AuthLoginIndexRoute
-  '/auth/register': typeof AuthRegisterIndexRoute
+  '/forgot-password': typeof AuthForgotPasswordIndexRoute
+  '/login': typeof AuthLoginIndexRoute
+  '/register': typeof AuthRegisterIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/$shortlink': typeof ShortlinkRoute
   '/dashboard/': typeof DashboardIndexRoute
-  '/auth/login/': typeof AuthLoginIndexRoute
-  '/auth/register/': typeof AuthRegisterIndexRoute
+  '/_auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
+  '/_auth/login/': typeof AuthLoginIndexRoute
+  '/_auth/register/': typeof AuthRegisterIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/auth/login' | '/auth/register'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/$shortlink'
+    | '/dashboard/'
+    | '/forgot-password'
+    | '/login'
+    | '/register'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/auth/login' | '/auth/register'
-  id: '__root__' | '/' | '/dashboard/' | '/auth/login/' | '/auth/register/'
+  to:
+    | '/'
+    | '/$shortlink'
+    | '/dashboard'
+    | '/forgot-password'
+    | '/login'
+    | '/register'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/$shortlink'
+    | '/dashboard/'
+    | '/_auth/forgot-password/'
+    | '/_auth/login/'
+    | '/_auth/register/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
+  ShortlinkRoute: typeof ShortlinkRoute
+  AuthForgotPasswordIndexRoute: typeof AuthForgotPasswordIndexRoute
   AuthLoginIndexRoute: typeof AuthLoginIndexRoute
   AuthRegisterIndexRoute: typeof AuthRegisterIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/$shortlink': {
+      id: '/$shortlink'
+      path: '/$shortlink'
+      fullPath: '/$shortlink'
+      preLoaderRoute: typeof ShortlinkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -80,31 +143,52 @@ declare module '@tanstack/react-router' {
     }
     '/dashboard/': {
       id: '/dashboard/'
-      path: '/dashboard'
-      fullPath: '/dashboard'
+      path: '/'
+      fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRouteRoute
     }
-    '/auth/register/': {
-      id: '/auth/register/'
-      path: '/auth/register'
-      fullPath: '/auth/register'
+    '/_auth/register/': {
+      id: '/_auth/register/'
+      path: '/register'
+      fullPath: '/register'
       preLoaderRoute: typeof AuthRegisterIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/login/': {
-      id: '/auth/login/'
-      path: '/auth/login'
-      fullPath: '/auth/login'
+    '/_auth/login/': {
+      id: '/_auth/login/'
+      path: '/login'
+      fullPath: '/login'
       preLoaderRoute: typeof AuthLoginIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_auth/forgot-password/': {
+      id: '/_auth/forgot-password/'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
+interface DashboardRouteRouteChildren {
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
+  DashboardRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardIndexRoute: DashboardIndexRoute,
+  DashboardRouteRoute: DashboardRouteRouteWithChildren,
+  ShortlinkRoute: ShortlinkRoute,
+  AuthForgotPasswordIndexRoute: AuthForgotPasswordIndexRoute,
   AuthLoginIndexRoute: AuthLoginIndexRoute,
   AuthRegisterIndexRoute: AuthRegisterIndexRoute,
 }
