@@ -1,33 +1,53 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { useAuth } from "../hooks/use-auth";
+import { useMutation } from "@tanstack/react-query";
+import { useShortLink } from "../hooks/use-short-link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LinkSchema, type LinkInputProps } from "../types/link";
 
 export const Route = createFileRoute("/")({
   component: Home,
 });
 
 function Home() {
-  const [input, setInput] = useState("");
-  const [short, setShort] = useState<string | null>(null);
+  const { user } = useAuth();
+
+  const { createShortLink } = useShortLink();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(LinkSchema),
+  });
+
   const [copied, setCopied] = useState(false);
 
-  const handleShorten = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input) return;
-    const hash = Math.random().toString(36).substring(2, 8);
-    const result = `${window.location.origin}/${hash}`;
-    setShort(result);
-    setCopied(false);
-  };
+  const { data, mutate, isSuccess } = useMutation({
+    mutationFn: createShortLink,
+    mutationKey: ["createShortLink"],
+  });
+
+  const shortedLink = `${import.meta.env.VITE_APP_ENV === "development" ? "http://localhost:5173" : "https://encurta.jcdev.com.br"}/${data?.shortCode}`;
+
+  console.log(data, isSuccess);
 
   const handleCopy = async () => {
-    if (!short) return;
+    if (!data) return;
     try {
-      await navigator.clipboard.writeText(short);
+      await navigator.clipboard.writeText(shortedLink);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
       // ignore
     }
+  };
+
+  const onSubmit = (data: LinkInputProps) => {
+    mutate(data);
   };
 
   return (
@@ -42,46 +62,55 @@ function Home() {
         </p>
 
         <form
-          onSubmit={handleShorten}
+          onSubmit={handleSubmit(onSubmit)}
           className="mx-auto max-w-2xl flex flex-col sm:flex-row gap-3"
         >
           <label htmlFor="url" className="sr-only">
             URL para encurtar
           </label>
-          <input
-            id="url"
-            type="url"
-            placeholder="Cole sua URL aqui (ex: https://example.com)"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className="w-full rounded-md bg-slate-800 border border-slate-700 px-4 py-3 placeholder:text-slate-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
-          />
+
+          <div className="flex flex-col flex-1 relative">
+            <input
+              {...register("originalUrl")}
+              id="url"
+              type="url"
+              placeholder="Cole sua URL aqui (ex: https://example.com)"
+              className="w-full rounded-md bg-slate-800 border border-slate-700 px-4 py-3 placeholder:text-slate-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
+            />
+            {errors.originalUrl && (
+              <p className="text-sm text-red-500 absolute -bottom-6 left-1">
+                {errors.originalUrl.message}
+              </p>
+            )}
+          </div>
 
           <div className="flex gap-2">
             <button
               type="submit"
-              className="rounded-md bg-cyan-500 text-slate-900 px-4 py-3 font-medium hover:bg-cyan-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
+              className="rounded-md cursor-pointer bg-cyan-500 text-slate-900 px-4 py-3 font-medium hover:bg-cyan-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
             >
               Encurtar
             </button>
-            <Link
-              to="/register"
-              className="hidden sm:inline-flex items-center rounded-md bg-slate-700 text-slate-100 px-4 py-3 hover:bg-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
-            >
-              Criar conta
-            </Link>
+            {!user && (
+              <Link
+                to="/register"
+                className="hidden sm:inline-flex items-center rounded-md bg-slate-700 text-slate-100 px-4 py-3 hover:bg-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
+              >
+                Criar conta
+              </Link>
+            )}
           </div>
         </form>
 
-        {short && (
+        {isSuccess && (
           <div className="mt-6 mx-auto max-w-2xl bg-slate-800 border border-slate-700 rounded-md p-3 flex items-center justify-between gap-3">
             <a
-              href={short}
+              href={shortedLink}
               target="_blank"
               rel="noreferrer"
               className="text-cyan-200 truncate"
             >
-              {short}
+              {shortedLink}
             </a>
             <div className="flex items-center gap-2">
               <button
@@ -92,10 +121,12 @@ function Home() {
               </button>
             </div>
 
-            <p>
-              Link encurtado por 24 horas, faça login para gerar url's
-              encurtadas permanente.
-            </p>
+            {!user && (
+              <p>
+                Link encurtado por 24 horas, faça login para gerar url's
+                encurtadas permanente.
+              </p>
+            )}
           </div>
         )}
       </section>

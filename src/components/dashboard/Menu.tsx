@@ -8,6 +8,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import React from "react";
+import { Link } from "@tanstack/react-router";
 
 type Item = {
   label: string;
@@ -29,13 +30,17 @@ const Menu = () => {
   return (
     <aside
       className={`shrink-0 border-r rounded border-r-slate-500 min-h-screen h-full transition-all duration-200 ${
-        open ? "w-64" : "w-16"
+        open ? "w-64" : "w-[70px]"
       }`}
       aria-label="Menu lateral do dashboard"
     >
       <div className="h-full flex flex-col justify-between">
         <div>
-          <div className="flex items-center justify-between px-3 py-3">
+          <div
+            onClick={() => setOpen((s) => !s)}
+            title={open ? "Fechar menu" : "Abrir menu"}
+            className="flex items-center justify-between cursor-pointer px-3 py-3"
+          >
             <div className="flex items-center gap-3">
               <div className="bg-cyan-500 text-slate-900 rounded-md w-8 h-8 flex items-center justify-center">
                 <svg
@@ -57,13 +62,8 @@ const Menu = () => {
               {open && <span className="font-semibold">Painel</span>}
             </div>
 
-            <button
-              aria-expanded={open}
-              onClick={() => setOpen((s) => !s)}
-              className="p-1 rounded-full cursor-pointer hover:bg-slate-800"
-              title={open ? "Fechar menu" : "Abrir menu"}
-            >
-              {open ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+            <button className="p-1 rounded-full cursor-pointer">
+              {open ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
             </button>
           </div>
 
@@ -79,13 +79,13 @@ const Menu = () => {
 
               if (it.to) {
                 return (
-                  <a
+                  <Link
                     key={it.label}
-                    href={it.to}
+                    to={it.to}
                     className="block text-slate-200"
                   >
                     {content}
-                  </a>
+                  </Link>
                 );
               }
 
@@ -102,7 +102,7 @@ const Menu = () => {
           </nav>
         </div>
 
-        <div className="px-3 py-4 text-xs text-slate-500">
+        <div className="px-3 py-4 text-xs text-center text-slate-500">
           Versão 0.1 • JCDev
         </div>
       </div>

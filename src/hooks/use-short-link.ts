@@ -1,32 +1,34 @@
 import { api } from "../lib/api";
+import type { BasePagination } from "../types/base-pagination.interface";
+import type { Link, LinkInputProps } from "../types/link";
 
 export function useShortLink() {
-  const createShortLink = async (originalUrl: string) => {
-    const response = await api.post("/links", { originalUrl });
+  const createShortLink = async (props: LinkInputProps): Promise<Link> => {
+    const response = await api.post<Link>("/links", props);
 
     const data = response.data;
 
     return data;
   };
 
-  const getShortLinkInfo = async (shortCode: string) => {
-    const response = await api.get(`/links/${shortCode}`);
+  const getShortLinkInfo = async (shortCode: string): Promise<Link> => {
+    const response = await api.get<Link>(`/links/short/${shortCode}`);
 
     const data = response.data;
 
     return data;
   };
 
-  const getShortLinkById = async (id: string) => {
-    const response = await api.get(`/links/id/${id}`);
+  const getShortLinkById = async (id: string): Promise<Link> => {
+    const response = await api.get<Link>(`/links/id/${id}`);
 
     const data = response.data;
 
     return data;
   };
 
-  const getAllShortLinks = async () => {
-    const response = await api.get(`/links`);
+  const getAllShortLinks = async (): Promise<BasePagination<Link>> => {
+    const response = await api.get<BasePagination<Link>>(`/links`);
 
     const data = response.data;
 

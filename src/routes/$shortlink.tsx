@@ -23,13 +23,17 @@ function RouteComponent() {
     return () => clearInterval(timer);
   }, [counter]);
 
-  const { isSuccess, isError } = useQuery({
+  const { isSuccess, data, isError } = useQuery({
     queryKey: ["fetchShortlink", shortlink],
     queryFn: () => getShortLinkInfo(shortlink),
     retry: false,
   });
 
-  console.log(isError, isSuccess);
+  useEffect(() => {
+    if (isSuccess) {
+      window.location.href = data.originalUrl;
+    }
+  }, [isSuccess, data]);
 
   return (
     <div className="w-full min-h-full bg-linear-to-b from-slate-900 via-slate-900/90 to-slate-800 fixed flex flex-col items-center">
