@@ -1,7 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useAuth } from "../../hooks/use-auth";
-import { useEffect } from "react";
-import { useNavigate } from "@tanstack/react-router";
 import { useDashboard } from "../../hooks/use-dashboard";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -25,17 +23,9 @@ export const Route = createFileRoute("/dashboard/")({
 });
 
 function RouteComponent() {
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
 
   const { overview } = useDashboard();
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isLoading && !user) {
-      navigate({ to: "/login" });
-    }
-  }, [user, isLoading, navigate]);
 
   const {
     data,
@@ -69,7 +59,7 @@ function RouteComponent() {
           </Button>
         </div>
 
-        {data && (
+        {data && !isRefetching && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             <Card>
               <div>
@@ -145,7 +135,7 @@ function RouteComponent() {
           </div>
         )}
 
-        {data && (
+        {data && !isRefetching && (
           <div className="grid md:grid-cols-2 gap-4 mt-4 md:mt-10">
             <div className="bg-slate-800  p-4 rounded-lg shadow flex flex-col">
               <div className="flex items-center justify-between mb-4">
@@ -227,9 +217,9 @@ function RouteComponent() {
           </div>
         )}
 
-        {isOverviewLoading && (
+        {(isOverviewLoading || isRefetching) && (
           <div className="flex flex-col items-center justify-center">
-            <div className="w-10 h-10 border-4 border-cyan-500 border-t-transparent border-solid rounded-full animate-spin"></div>
+            <div className="w-10 h-10 border-4 mb-6 border-cyan-500 border-t-transparent border-solid rounded-full animate-spin"></div>
             <p>Carregando dados do painel...</p>
           </div>
         )}
