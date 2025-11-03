@@ -14,7 +14,7 @@ export { LinkSchema };
 export interface Link extends z.infer<typeof LinkSchema> {
   id: string;
   shortCode: string;
-  visitsCount: 4;
+  visitsCount: number;
   stats?: unknown;
   createdAt: string;
   updatedAt: string;

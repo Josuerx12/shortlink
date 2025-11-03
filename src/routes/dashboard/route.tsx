@@ -10,7 +10,7 @@ function RouteComponent() {
     <div className="flex">
       <Menu />
 
-      <div className="flex-1 px-2">
+      <div className="flex-1 p-3 md:p-6">
         <Outlet />
       </div>
     </div>
