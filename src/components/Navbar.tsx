@@ -7,7 +7,7 @@ const Navbar = () => {
   const { user, logout } = useAuth();
 
   return (
-    <header className="w-full h-14 px-4 text-slate-100 flex items-center justify-between  font-sans">
+    <header className="w-full fixed h-14 px-4 bg-linear-to-b from-slate-900 via-slate-900/90 text-slate-100 flex items-center justify-between  font-sans">
       <div className="flex items-center gap-4">
         <LogoLink />
       </div>

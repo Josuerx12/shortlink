@@ -26,7 +26,9 @@ const RootLayout = () => {
     <main className="min-h-screen flex flex-col bg-linear-to-b from-slate-900 via-slate-900/90 to-slate-800 text-slate-100">
       <Navbar />
 
-      <Outlet />
+      <div className="pt-14">
+        <Outlet />
+      </div>
 
       <Footer />
       <ToastContainer />

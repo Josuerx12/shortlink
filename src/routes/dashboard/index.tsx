@@ -51,7 +51,7 @@ function RouteComponent() {
   return (
     <div className="flex w-full">
       <div className="flex-1">
-        <div className="flex justify-between flex-wrap">
+        <div className="flex justify-between flex-wrap mb-10">
           <h2 className="text-xl font-semibold mb-4">Bem-vindo ao Painel</h2>
 
           <Button
